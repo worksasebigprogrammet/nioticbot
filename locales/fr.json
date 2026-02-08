@@ -1,0 +1,252 @@
+{
+  "commands": {
+    "ban": {
+      "description": "Bannir un membre du serveur",
+      "success": "✅ **{user}** a été banni par **{moderator}**\nRaison : {reason}",
+      "error": "❌ Impossible de bannir **{user}**",
+      "error_self": "❌ Vous ne pouvez pas vous bannir vous-même",
+      "error_bot": "❌ Je ne peux pas bannir cet utilisateur",
+      "error_hierarchy": "❌ Cet utilisateur a un rôle supérieur ou égal au mien",
+      "dm": "🔨 Vous avez été banni de **{server}**\nRaison : {reason}"
+    },
+    "kick": {
+      "description": "Expulser un membre du serveur",
+      "success": "✅ **{user}** a été expulsé par **{moderator}**\nRaison : {reason}",
+      "error": "❌ Impossible d'expulser **{user}**",
+      "error_self": "❌ Vous ne pouvez pas vous expulser vous-même",
+      "error_bot": "❌ Je ne peux pas expulser cet utilisateur",
+      "dm": "👢 Vous avez été expulsé de **{server}**\nRaison : {reason}"
+    },
+    "mute": {
+      "description": "Rendre muet un membre temporairement",
+      "success": "✅ **{user}** a été rendu muet pour **{duration}**\nRaison : {reason}",
+      "unmute_success": "✅ **{user}** n'est plus muet",
+      "error": "❌ Impossible de rendre muet **{user}**",
+      "error_already": "❌ **{user}** est déjà muet",
+      "error_not_muted": "❌ **{user}** n'est pas muet",
+      "dm": "🔇 Vous avez été rendu muet sur **{server}** pour **{duration}**\nRaison : {reason}"
+    },
+    "warn": {
+      "description": "Avertir un membre",
+      "success": "✅ **{user}** a reçu un avertissement (#{count})\nRaison : {reason}",
+      "list_title": "⚠️ Avertissements de {user}",
+      "list_empty": "Aucun avertissement trouvé",
+      "clear_success": "✅ Tous les avertissements de **{user}** ont été effacés",
+      "dm": "⚠️ Vous avez reçu un avertissement sur **{server}**\nRaison : {reason}"
+    },
+    "purge": {
+      "description": "Supprimer des messages en masse",
+      "success": "✅ **{count}** messages supprimés",
+      "error": "❌ Impossible de supprimer les messages",
+      "error_amount": "❌ Veuillez spécifier un nombre entre 1 et 100"
+    },
+    "softban": {
+      "description": "Ban puis unban immédiat (nettoie les messages)",
+      "success": "✅ **{user}** a été softban (messages nettoyés)\nRaison : {reason}"
+    },
+    "case": {
+      "description": "Consulter un cas de modération",
+      "title": "📋 Cas #{id}",
+      "not_found": "❌ Cas #{id} introuvable"
+    },
+    "history": {
+      "description": "Voir l'historique de modération d'un utilisateur",
+      "title": "📋 Historique de {user}",
+      "empty": "Aucun historique de modération"
+    },
+    "ticket": {
+      "description": "Gérer les tickets de support",
+      "panel_title": "🎫 Support - Créer un ticket",
+      "panel_description": "Cliquez sur le bouton ci-dessous pour créer un ticket de support.\nSélectionnez la catégorie qui correspond à votre demande.",
+      "created": "✅ Ticket créé : {channel}",
+      "closed": "✅ Ticket fermé",
+      "claimed": "✅ Ticket pris en charge par **{user}**",
+      "added": "✅ **{user}** a été ajouté au ticket",
+      "removed": "✅ **{user}** a été retiré du ticket",
+      "renamed": "✅ Ticket renommé en **{name}**",
+      "reopened": "✅ Ticket réouvert",
+      "category_support": "📩 Support",
+      "category_report": "🚨 Report",
+      "category_partnership": "🤝 Partenariat",
+      "category_other": "📝 Autre",
+      "rate_title": "⭐ Notez le support",
+      "rate_description": "Comment évaluez-vous le support reçu ?",
+      "rate_thanks": "Merci pour votre évaluation !"
+    },
+    "rank": {
+      "description": "Voir son niveau et son XP",
+      "title": "📊 Niveau de {user}",
+      "level": "Niveau",
+      "xp": "XP",
+      "rank_position": "Classement",
+      "next_level": "Prochain niveau"
+    },
+    "leaderboard": {
+      "description": "Voir le classement du serveur",
+      "title": "🏆 Classement - {server}",
+      "empty": "Aucune donnée de classement"
+    },
+    "balance": {
+      "description": "Voir son solde",
+      "title": "💰 Solde de {user}"
+    },
+    "daily": {
+      "description": "Réclamer sa récompense quotidienne",
+      "success": "✅ Vous avez reçu **{amount}** {currency} !",
+      "cooldown": "❌ Vous avez déjà réclamé votre récompense quotidienne. Revenez dans **{time}**"
+    },
+    "weekly": {
+      "description": "Réclamer sa récompense hebdomadaire",
+      "success": "✅ Vous avez reçu **{amount}** {currency} !",
+      "cooldown": "❌ Vous avez déjà réclamé votre récompense hebdomadaire. Revenez dans **{time}**"
+    },
+    "give": {
+      "description": "Donner de l'argent à un membre",
+      "success": "✅ Vous avez donné **{amount}** {currency} à **{user}**",
+      "error_self": "❌ Vous ne pouvez pas vous donner de l'argent",
+      "error_amount": "❌ Montant invalide",
+      "error_funds": "❌ Vous n'avez pas assez de {currency}"
+    },
+    "shop": {
+      "description": "Voir la boutique",
+      "title": "🛒 Boutique",
+      "empty": "La boutique est vide",
+      "buy_success": "✅ Vous avez acheté **{item}** pour **{price}** {currency}"
+    },
+    "play": {
+      "description": "Jouer une musique",
+      "searching": "🔍 Recherche en cours...",
+      "now_playing": "🎵 En cours de lecture",
+      "added_queue": "✅ Ajouté à la file d'attente (position #{position})",
+      "error_channel": "❌ Vous devez être dans un salon vocal",
+      "error_not_found": "❌ Aucun résultat trouvé"
+    },
+    "giveaway": {
+      "description": "Gérer les giveaways",
+      "title": "🎉 GIVEAWAY",
+      "ended_title": "🎉 GIVEAWAY TERMINÉ",
+      "winners": "Gagnant(s)",
+      "no_winners": "Pas assez de participants",
+      "participate": "🎉 Participer",
+      "participants": "Participants",
+      "ends_at": "Se termine",
+      "ended": "Terminé"
+    },
+    "suggest": {
+      "description": "Faire une suggestion",
+      "success": "✅ Votre suggestion a été envoyée !",
+      "title": "💡 Suggestion #{id}",
+      "accepted": "✅ Suggestion acceptée",
+      "denied": "❌ Suggestion refusée",
+      "considered": "🤔 Suggestion en considération",
+      "implemented": "✅ Suggestion implémentée"
+    },
+    "autorole": {
+      "description": "Gérer les rôles automatiques",
+      "added": "✅ Rôle **{role}** ajouté aux rôles automatiques",
+      "removed": "✅ Rôle **{role}** retiré des rôles automatiques",
+      "list_title": "🎭 Rôles automatiques",
+      "list_empty": "Aucun rôle automatique configuré"
+    },
+    "antiraid": {
+      "description": "Gérer le système anti-raid",
+      "enabled": "✅ Mode anti-raid **activé**",
+      "disabled": "✅ Mode anti-raid **désactivé**",
+      "status_title": "🛡️ Statut Anti-Raid",
+      "config_title": "⚙️ Configuration Anti-Raid",
+      "raid_detected": "🚨 **RAID DÉTECTÉ** - {count} joins en {seconds}s"
+    },
+    "setup": {
+      "description": "Configurer les salons de logs",
+      "title": "📊 Setup des Logs",
+      "simple": "Logs Simple (4 salons)",
+      "complete": "Logs Complet (8 salons)",
+      "extreme": "Logs Extrême (12+ salons)",
+      "success": "✅ Setup des logs terminé ! Catégorie **{category}** créée avec {count} salons"
+    },
+    "config": {
+      "description": "Configurer le bot",
+      "title": "⚙️ Configuration",
+      "updated": "✅ Configuration mise à jour : **{key}** = **{value}**",
+      "reset": "✅ Module **{module}** réinitialisé",
+      "reloaded": "✅ Configuration rechargée"
+    },
+    "voicetime": {
+      "description": "Voir le temps passé en vocal",
+      "title": "🔊 Temps vocal de {user}"
+    },
+    "backup": {
+      "description": "Gérer les backups",
+      "created": "✅ Backup créé : **{id}**",
+      "list_title": "💾 Backups disponibles",
+      "restored": "✅ Backup **{id}** restauré",
+      "error": "❌ Erreur lors du backup"
+    },
+    "stats": {
+      "description": "Voir les statistiques",
+      "server_title": "📈 Statistiques de {server}",
+      "member_title": "📈 Statistiques de {user}",
+      "mod_title": "📈 Statistiques de modération"
+    },
+    "language": {
+      "description": "Changer la langue du bot",
+      "success": "✅ Langue changée en **{language}**",
+      "error": "❌ Langue non supportée. Langues disponibles : {languages}"
+    }
+  },
+  "events": {
+    "member_join": "👋 Bienvenue **{user}** sur **{server}** ! Vous êtes le **{count}ème** membre !",
+    "member_leave": "👋 **{user}** a quitté le serveur",
+    "ready": "✅ {bot} est en ligne et prêt ! ({guilds} serveurs)"
+  },
+  "logs": {
+    "member_join": "📥 Membre rejoint",
+    "member_leave": "📤 Membre parti",
+    "member_ban": "🔨 Membre banni",
+    "member_kick": "👢 Membre expulsé",
+    "member_mute": "🔇 Membre rendu muet",
+    "member_unmute": "🔈 Membre démuté",
+    "member_warn": "⚠️ Membre averti",
+    "message_delete": "🗑️ Message supprimé",
+    "message_edit": "✏️ Message modifié",
+    "message_bulk_delete": "🗑️ Messages supprimés en masse",
+    "role_add": "➕ Rôle ajouté",
+    "role_remove": "➖ Rôle retiré",
+    "role_create": "🆕 Rôle créé",
+    "role_delete": "🗑️ Rôle supprimé",
+    "role_update": "✏️ Rôle modifié",
+    "channel_create": "🆕 Salon créé",
+    "channel_delete": "🗑️ Salon supprimé",
+    "channel_update": "✏️ Salon modifié",
+    "voice_join": "🔊 Rejoint vocal",
+    "voice_leave": "🔇 Quitté vocal",
+    "voice_move": "🔀 Déplacé en vocal",
+    "antiraid_triggered": "🚨 Anti-raid déclenché",
+    "antiraid_action": "🛡️ Action anti-raid"
+  },
+  "errors": {
+    "no_permission": "❌ Vous n'avez pas la permission d'utiliser cette commande",
+    "bot_no_permission": "❌ Je n'ai pas les permissions nécessaires",
+    "module_disabled": "❌ Ce module est désactivé",
+    "unknown_error": "❌ Une erreur inattendue s'est produite",
+    "cooldown": "⏳ Veuillez attendre **{time}** avant de réutiliser cette commande",
+    "invalid_user": "❌ Utilisateur introuvable",
+    "invalid_duration": "❌ Durée invalide. Exemples : 10m, 1h, 1d, 7d"
+  },
+  "common": {
+    "reason": "Raison",
+    "moderator": "Modérateur",
+    "user": "Utilisateur",
+    "duration": "Durée",
+    "date": "Date",
+    "id": "ID",
+    "none": "Aucune",
+    "permanent": "Permanent",
+    "yes": "Oui",
+    "no": "Non",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "page": "Page {current}/{total}",
+    "no_reason": "Aucune raison fournie"
+  }
+}

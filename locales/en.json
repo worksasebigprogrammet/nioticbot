@@ -1,0 +1,252 @@
+{
+  "commands": {
+    "ban": {
+      "description": "Ban a member from the server",
+      "success": "✅ **{user}** has been banned by **{moderator}**\nReason: {reason}",
+      "error": "❌ Unable to ban **{user}**",
+      "error_self": "❌ You cannot ban yourself",
+      "error_bot": "❌ I cannot ban this user",
+      "error_hierarchy": "❌ This user has a role higher than or equal to mine",
+      "dm": "🔨 You have been banned from **{server}**\nReason: {reason}"
+    },
+    "kick": {
+      "description": "Kick a member from the server",
+      "success": "✅ **{user}** has been kicked by **{moderator}**\nReason: {reason}",
+      "error": "❌ Unable to kick **{user}**",
+      "error_self": "❌ You cannot kick yourself",
+      "error_bot": "❌ I cannot kick this user",
+      "dm": "👢 You have been kicked from **{server}**\nReason: {reason}"
+    },
+    "mute": {
+      "description": "Temporarily mute a member",
+      "success": "✅ **{user}** has been muted for **{duration}**\nReason: {reason}",
+      "unmute_success": "✅ **{user}** has been unmuted",
+      "error": "❌ Unable to mute **{user}**",
+      "error_already": "❌ **{user}** is already muted",
+      "error_not_muted": "❌ **{user}** is not muted",
+      "dm": "🔇 You have been muted on **{server}** for **{duration}**\nReason: {reason}"
+    },
+    "warn": {
+      "description": "Warn a member",
+      "success": "✅ **{user}** has received a warning (#{count})\nReason: {reason}",
+      "list_title": "⚠️ Warnings for {user}",
+      "list_empty": "No warnings found",
+      "clear_success": "✅ All warnings for **{user}** have been cleared",
+      "dm": "⚠️ You received a warning on **{server}**\nReason: {reason}"
+    },
+    "purge": {
+      "description": "Bulk delete messages",
+      "success": "✅ **{count}** messages deleted",
+      "error": "❌ Unable to delete messages",
+      "error_amount": "❌ Please specify a number between 1 and 100"
+    },
+    "softban": {
+      "description": "Ban then unban immediately (cleans messages)",
+      "success": "✅ **{user}** has been softbanned (messages cleaned)\nReason: {reason}"
+    },
+    "case": {
+      "description": "View a moderation case",
+      "title": "📋 Case #{id}",
+      "not_found": "❌ Case #{id} not found"
+    },
+    "history": {
+      "description": "View moderation history of a user",
+      "title": "📋 History for {user}",
+      "empty": "No moderation history"
+    },
+    "ticket": {
+      "description": "Manage support tickets",
+      "panel_title": "🎫 Support - Create a ticket",
+      "panel_description": "Click the button below to create a support ticket.\nSelect the category that matches your request.",
+      "created": "✅ Ticket created: {channel}",
+      "closed": "✅ Ticket closed",
+      "claimed": "✅ Ticket claimed by **{user}**",
+      "added": "✅ **{user}** has been added to the ticket",
+      "removed": "✅ **{user}** has been removed from the ticket",
+      "renamed": "✅ Ticket renamed to **{name}**",
+      "reopened": "✅ Ticket reopened",
+      "category_support": "📩 Support",
+      "category_report": "🚨 Report",
+      "category_partnership": "🤝 Partnership",
+      "category_other": "📝 Other",
+      "rate_title": "⭐ Rate support",
+      "rate_description": "How would you rate the support received?",
+      "rate_thanks": "Thank you for your rating!"
+    },
+    "rank": {
+      "description": "View your level and XP",
+      "title": "📊 Level of {user}",
+      "level": "Level",
+      "xp": "XP",
+      "rank_position": "Rank",
+      "next_level": "Next level"
+    },
+    "leaderboard": {
+      "description": "View server leaderboard",
+      "title": "🏆 Leaderboard - {server}",
+      "empty": "No leaderboard data"
+    },
+    "balance": {
+      "description": "View balance",
+      "title": "💰 Balance of {user}"
+    },
+    "daily": {
+      "description": "Claim your daily reward",
+      "success": "✅ You received **{amount}** {currency}!",
+      "cooldown": "❌ You have already claimed your daily reward. Come back in **{time}**"
+    },
+    "weekly": {
+      "description": "Claim your weekly reward",
+      "success": "✅ You received **{amount}** {currency}!",
+      "cooldown": "❌ You have already claimed your weekly reward. Come back in **{time}**"
+    },
+    "give": {
+      "description": "Give money to a member",
+      "success": "✅ You gave **{amount}** {currency} to **{user}**",
+      "error_self": "❌ You cannot give money to yourself",
+      "error_amount": "❌ Invalid amount",
+      "error_funds": "❌ You don't have enough {currency}"
+    },
+    "shop": {
+      "description": "View the shop",
+      "title": "🛒 Shop",
+      "empty": "The shop is empty",
+      "buy_success": "✅ You bought **{item}** for **{price}** {currency}"
+    },
+    "play": {
+      "description": "Play a song",
+      "searching": "🔍 Searching...",
+      "now_playing": "🎵 Now playing",
+      "added_queue": "✅ Added to queue (position #{position})",
+      "error_channel": "❌ You must be in a voice channel",
+      "error_not_found": "❌ No results found"
+    },
+    "giveaway": {
+      "description": "Manage giveaways",
+      "title": "🎉 GIVEAWAY",
+      "ended_title": "🎉 GIVEAWAY ENDED",
+      "winners": "Winner(s)",
+      "no_winners": "Not enough participants",
+      "participate": "🎉 Participate",
+      "participants": "Participants",
+      "ends_at": "Ends",
+      "ended": "Ended"
+    },
+    "suggest": {
+      "description": "Make a suggestion",
+      "success": "✅ Your suggestion has been submitted!",
+      "title": "💡 Suggestion #{id}",
+      "accepted": "✅ Suggestion accepted",
+      "denied": "❌ Suggestion denied",
+      "considered": "🤔 Suggestion under consideration",
+      "implemented": "✅ Suggestion implemented"
+    },
+    "autorole": {
+      "description": "Manage automatic roles",
+      "added": "✅ Role **{role}** added to automatic roles",
+      "removed": "✅ Role **{role}** removed from automatic roles",
+      "list_title": "🎭 Automatic roles",
+      "list_empty": "No automatic roles configured"
+    },
+    "antiraid": {
+      "description": "Manage the anti-raid system",
+      "enabled": "✅ Anti-raid mode **enabled**",
+      "disabled": "✅ Anti-raid mode **disabled**",
+      "status_title": "🛡️ Anti-Raid Status",
+      "config_title": "⚙️ Anti-Raid Configuration",
+      "raid_detected": "🚨 **RAID DETECTED** - {count} joins in {seconds}s"
+    },
+    "setup": {
+      "description": "Configure log channels",
+      "title": "📊 Log Setup",
+      "simple": "Simple Logs (4 channels)",
+      "complete": "Complete Logs (8 channels)",
+      "extreme": "Extreme Logs (12+ channels)",
+      "success": "✅ Log setup complete! Category **{category}** created with {count} channels"
+    },
+    "config": {
+      "description": "Configure the bot",
+      "title": "⚙️ Configuration",
+      "updated": "✅ Configuration updated: **{key}** = **{value}**",
+      "reset": "✅ Module **{module}** reset",
+      "reloaded": "✅ Configuration reloaded"
+    },
+    "voicetime": {
+      "description": "View time spent in voice channels",
+      "title": "🔊 Voice time for {user}"
+    },
+    "backup": {
+      "description": "Manage backups",
+      "created": "✅ Backup created: **{id}**",
+      "list_title": "💾 Available backups",
+      "restored": "✅ Backup **{id}** restored",
+      "error": "❌ Backup error"
+    },
+    "stats": {
+      "description": "View statistics",
+      "server_title": "📈 Statistics for {server}",
+      "member_title": "📈 Statistics for {user}",
+      "mod_title": "📈 Moderation statistics"
+    },
+    "language": {
+      "description": "Change bot language",
+      "success": "✅ Language changed to **{language}**",
+      "error": "❌ Unsupported language. Available languages: {languages}"
+    }
+  },
+  "events": {
+    "member_join": "👋 Welcome **{user}** to **{server}**! You are the **{count}th** member!",
+    "member_leave": "👋 **{user}** has left the server",
+    "ready": "✅ {bot} is online and ready! ({guilds} servers)"
+  },
+  "logs": {
+    "member_join": "📥 Member joined",
+    "member_leave": "📤 Member left",
+    "member_ban": "🔨 Member banned",
+    "member_kick": "👢 Member kicked",
+    "member_mute": "🔇 Member muted",
+    "member_unmute": "🔈 Member unmuted",
+    "member_warn": "⚠️ Member warned",
+    "message_delete": "🗑️ Message deleted",
+    "message_edit": "✏️ Message edited",
+    "message_bulk_delete": "🗑️ Bulk messages deleted",
+    "role_add": "➕ Role added",
+    "role_remove": "➖ Role removed",
+    "role_create": "🆕 Role created",
+    "role_delete": "🗑️ Role deleted",
+    "role_update": "✏️ Role updated",
+    "channel_create": "🆕 Channel created",
+    "channel_delete": "🗑️ Channel deleted",
+    "channel_update": "✏️ Channel updated",
+    "voice_join": "🔊 Joined voice",
+    "voice_leave": "🔇 Left voice",
+    "voice_move": "🔀 Moved in voice",
+    "antiraid_triggered": "🚨 Anti-raid triggered",
+    "antiraid_action": "🛡️ Anti-raid action"
+  },
+  "errors": {
+    "no_permission": "❌ You don't have permission to use this command",
+    "bot_no_permission": "❌ I don't have the necessary permissions",
+    "module_disabled": "❌ This module is disabled",
+    "unknown_error": "❌ An unexpected error occurred",
+    "cooldown": "⏳ Please wait **{time}** before using this command again",
+    "invalid_user": "❌ User not found",
+    "invalid_duration": "❌ Invalid duration. Examples: 10m, 1h, 1d, 7d"
+  },
+  "common": {
+    "reason": "Reason",
+    "moderator": "Moderator",
+    "user": "User",
+    "duration": "Duration",
+    "date": "Date",
+    "id": "ID",
+    "none": "None",
+    "permanent": "Permanent",
+    "yes": "Yes",
+    "no": "No",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "page": "Page {current}/{total}",
+    "no_reason": "No reason provided"
+  }
+}

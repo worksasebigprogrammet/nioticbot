@@ -1,0 +1,40 @@
+{
+  "bot": {
+    "prefix": "!",
+    "owners": ["VOTRE_ID_DISCORD"],
+    "statusType": "PLAYING",
+    "statusText": "avec les membres !",
+    "language": "fr"
+  },
+  "permissions": {
+    "adminRoleId": "ID_DU_ROLE_ADMIN",
+    "adminUsers": ["ID_USER_1", "ID_USER_2"],
+    "bypassUsers": ["ID_OWNER"]
+  },
+  "modules": {
+    "moderation": true,
+    "logs": true,
+    "antiraid": true,
+    "automod": true,
+    "tickets": true,
+    "levels": true,
+    "economy": true,
+    "music": true,
+    "voiceTracking": true,
+    "giveaways": true,
+    "autoroles": true,
+    "suggestions": true,
+    "stats": true,
+    "backup": true
+  },
+  "colors": {
+    "success": "#00FF00",
+    "error": "#FF0000",
+    "warning": "#FFA500",
+    "info": "#0099FF",
+    "moderation": "#E74C3C",
+    "levels": "#9B59B6",
+    "economy": "#F1C40F",
+    "music": "#3498DB"
+  }
+}
