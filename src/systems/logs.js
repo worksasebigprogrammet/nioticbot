@@ -63,6 +63,11 @@ const LOG_TYPE_MAP = {
     'moderation.kick':      'moderation',
     'moderation.mute':      'moderation',
     'moderation.warn':      'moderation',
+    'moderation.unban':     'moderation',
+    'moderation.unmute':    'moderation',
+    'moderation.softban':   'moderation',
+    'moderation.purge':     'moderation',
+    'moderation.clearwarns':'moderation',
 
     /* ─── Tickets ─── */
     'ticket.create':        'tickets',
@@ -115,6 +120,11 @@ const LOG_COLORS = {
     'moderation.kick':       0xE67E22,
     'moderation.mute':       0xF1C40F,
     'moderation.warn':       0xFFCC00,
+    'moderation.unban':      0x00FF00,
+    'moderation.unmute':     0x00FFAA,
+    'moderation.softban':    0xFF4444,
+    'moderation.purge':      0xFF6600,
+    'moderation.clearwarns': 0x00CCFF,
 
     /* ─── Tickets ─── */
     'ticket.create':         0x00CC66,
@@ -167,6 +177,11 @@ const LOG_TITLES = {
     'moderation.kick':       '👢 Expulsion',
     'moderation.mute':       '🔇 Réduction au silence',
     'moderation.warn':       '⚠️ Avertissement',
+    'moderation.unban':      '🔓 Débannissement',
+    'moderation.unmute':     '🔊 Démute',
+    'moderation.softban':    '👋 Softban',
+    'moderation.purge':      '🧹 Purge',
+    'moderation.clearwarns': '🗑️ Avertissements effacés',
 
     /* ─── Tickets ─── */
     'ticket.create':         '🎫 Ticket créé',
@@ -424,6 +439,16 @@ class LogSystem {
                 return this._buildModerationMuteFields(data);
             case 'moderation.warn':
                 return this._buildModerationWarnFields(data);
+            case 'moderation.unban':
+                return this._buildModerationUnbanFields(data);
+            case 'moderation.unmute':
+                return this._buildModerationUnmuteFields(data);
+            case 'moderation.softban':
+                return this._buildModerationSoftbanFields(data);
+            case 'moderation.purge':
+                return this._buildModerationPurgeFields(data);
+            case 'moderation.clearwarns':
+                return this._buildModerationClearwarnsFields(data);
 
             /* ─────────────────────────────────────────── */
             /*                  TICKETS                    */
@@ -1028,6 +1053,87 @@ class LogSystem {
         }
         if (data.caseId) {
             fields.push({ name: '🔢 Cas', value: `#${data.caseId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Débannissement ─── */
+    _buildModerationUnbanFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Utilisateur débanni', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.moderator) {
+            fields.push({ name: '🔓 Modérateur', value: `${data.moderator.tag || data.moderator}\n\`${data.moderator.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Raison', value: data.reason, inline: false });
+        }
+        if (data.caseId) {
+            fields.push({ name: '🔢 Cas', value: `#${data.caseId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Démute ─── */
+    _buildModerationUnmuteFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Utilisateur démuté', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.moderator) {
+            fields.push({ name: '🔊 Modérateur', value: `${data.moderator.tag || data.moderator}\n\`${data.moderator.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Raison', value: data.reason, inline: false });
+        }
+        if (data.caseId) {
+            fields.push({ name: '🔢 Cas', value: `#${data.caseId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Softban ─── */
+    _buildModerationSoftbanFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Utilisateur softban', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.moderator) {
+            fields.push({ name: '👋 Modérateur', value: `${data.moderator.tag || data.moderator}\n\`${data.moderator.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Raison', value: data.reason, inline: false });
+        }
+        if (data.caseId) {
+            fields.push({ name: '🔢 Cas', value: `#${data.caseId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Purge ─── */
+    _buildModerationPurgeFields(data) {
+        const fields = [];
+        if (data.moderator) {
+            fields.push({ name: '🧹 Modérateur', value: `${data.moderator.tag || data.moderator}\n\`${data.moderator.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Détails', value: data.reason, inline: false });
+        }
+        return fields;
+    }
+
+    /* ─── Avertissements effacés ─── */
+    _buildModerationClearwarnsFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Utilisateur', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.moderator) {
+            fields.push({ name: '🗑️ Modérateur', value: `${data.moderator.tag || data.moderator}\n\`${data.moderator.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Détails', value: data.reason, inline: false });
         }
         return fields;
     }

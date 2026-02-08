@@ -88,6 +88,9 @@ module.exports = {
                 caseId: caseId
             });
 
+            // Journaliser dans les logs admin
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'UNMUTE', targetUser, { reason: 'Démute manuel', caseId });
+
             // Répondre avec un embed de succès
             return interaction.reply({
                 embeds: [successEmbed(
