@@ -63,6 +63,12 @@ const LOG_TYPE_MAP = {
     'moderation.kick':      'moderation',
     'moderation.mute':      'moderation',
     'moderation.warn':      'moderation',
+
+    /* ─── Tickets ─── */
+    'ticket.create':        'tickets',
+    'ticket.claim':         'tickets',
+    'ticket.close':         'tickets',
+    'ticket.reopen':        'tickets',
 };
 
 /* ─── Couleurs associées à chaque catégorie de log ─── */
@@ -109,6 +115,12 @@ const LOG_COLORS = {
     'moderation.kick':       0xE67E22,
     'moderation.mute':       0xF1C40F,
     'moderation.warn':       0xFFCC00,
+
+    /* ─── Tickets ─── */
+    'ticket.create':         0x00CC66,
+    'ticket.claim':          0x3498DB,
+    'ticket.close':          0xE74C3C,
+    'ticket.reopen':         0xF39C12,
 };
 
 /* ─── Titres d'embeds pour chaque type de log ─── */
@@ -155,6 +167,12 @@ const LOG_TITLES = {
     'moderation.kick':       '👢 Expulsion',
     'moderation.mute':       '🔇 Réduction au silence',
     'moderation.warn':       '⚠️ Avertissement',
+
+    /* ─── Tickets ─── */
+    'ticket.create':         '🎫 Ticket créé',
+    'ticket.claim':          '🙋 Ticket réclamé',
+    'ticket.close':          '🔒 Ticket fermé',
+    'ticket.reopen':         '🔓 Ticket réouvert',
 };
 
 /**
@@ -406,6 +424,19 @@ class LogSystem {
                 return this._buildModerationMuteFields(data);
             case 'moderation.warn':
                 return this._buildModerationWarnFields(data);
+
+            /* ─────────────────────────────────────────── */
+            /*                  TICKETS                    */
+            /* ─────────────────────────────────────────── */
+
+            case 'ticket.create':
+                return this._buildTicketCreateFields(data);
+            case 'ticket.claim':
+                return this._buildTicketClaimFields(data);
+            case 'ticket.close':
+                return this._buildTicketCloseFields(data);
+            case 'ticket.reopen':
+                return this._buildTicketReopenFields(data);
 
             /* ─── Type inconnu : retourner un champ générique ─── */
             default:
@@ -999,6 +1030,144 @@ class LogSystem {
             fields.push({ name: '🔢 Cas', value: `#${data.caseId}`, inline: true });
         }
         return fields;
+    }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /*              CONSTRUCTEURS DE CHAMPS — TICKETS             */
+    /* ═══════════════════════════════════════════════════════════ */
+
+    /* ─── Ticket créé ─── */
+    _buildTicketCreateFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Créé par', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.channel) {
+            fields.push({ name: '💬 Salon', value: `<#${data.channel.id || data.channel}>\n\`${data.channel.id || data.channel}\``, inline: true });
+        }
+        if (data.category) {
+            fields.push({ name: '📁 Catégorie', value: data.category, inline: true });
+        }
+        if (data.ticketId) {
+            fields.push({ name: '🔢 Ticket', value: `#${data.ticketId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Ticket réclamé ─── */
+    _buildTicketClaimFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Auteur du ticket', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.staff) {
+            fields.push({ name: '🙋 Réclamé par', value: `${data.staff.tag || data.staff}\n\`${data.staff.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.channel) {
+            fields.push({ name: '💬 Salon', value: `<#${data.channel.id || data.channel}>\n\`${data.channel.id || data.channel}\``, inline: true });
+        }
+        if (data.ticketId) {
+            fields.push({ name: '🔢 Ticket', value: `#${data.ticketId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Ticket fermé ─── */
+    _buildTicketCloseFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Auteur du ticket', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.closedBy) {
+            fields.push({ name: '🔒 Fermé par', value: `${data.closedBy.tag || data.closedBy}\n\`${data.closedBy.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.channel) {
+            fields.push({ name: '💬 Salon', value: `<#${data.channel.id || data.channel}>\n\`${data.channel.id || data.channel}\``, inline: true });
+        }
+        if (data.reason) {
+            fields.push({ name: '📝 Raison', value: data.reason, inline: false });
+        }
+        if (data.ticketId) {
+            fields.push({ name: '🔢 Ticket', value: `#${data.ticketId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ─── Ticket réouvert ─── */
+    _buildTicketReopenFields(data) {
+        const fields = [];
+        if (data.user) {
+            fields.push({ name: '👤 Auteur du ticket', value: `${data.user.tag || data.user}\n\`${data.user.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.reopenedBy) {
+            fields.push({ name: '🔓 Réouvert par', value: `${data.reopenedBy.tag || data.reopenedBy}\n\`${data.reopenedBy.id || 'Inconnu'}\``, inline: true });
+        }
+        if (data.channel) {
+            fields.push({ name: '💬 Salon', value: `<#${data.channel.id || data.channel}>\n\`${data.channel.id || data.channel}\``, inline: true });
+        }
+        if (data.ticketId) {
+            fields.push({ name: '🔢 Ticket', value: `#${data.ticketId}`, inline: true });
+        }
+        return fields;
+    }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /*                  MÉTHODE logTicket                         */
+    /* ═══════════════════════════════════════════════════════════ */
+
+    /**
+     * Journalise une action liée aux tickets.
+     *
+     * Récupère la configuration du serveur, vérifie que les logs
+     * de tickets sont activés, et envoie un embed adapté à l'action.
+     *
+     * @param {import('discord.js').Guild} guild - Instance du serveur Discord
+     * @param {string} action - Type d'action : 'ticket_created', 'ticket_claimed', 'ticket_closed', 'ticket_reopened'
+     * @param {object} data - Données associées à l'événement
+     * @returns {Promise<void>}
+     */
+    async logTicket(guild, action, data) {
+        try {
+            /* ─── Récupérer la configuration du serveur ─── */
+            const guildSettings = await Guild.findOne({ guildId: guild.id });
+            if (!guildSettings) return;
+
+            /* ─── Vérifier que le module de logs est activé ─── */
+            if (!guildSettings.modules || !guildSettings.modules.logs) return;
+
+            /* ─── Vérifier que les logs de tickets sont activés ─── */
+            const ticketLogConfig = guildSettings.logs ? guildSettings.logs.tickets : null;
+            if (!ticketLogConfig || !ticketLogConfig.enabled || !ticketLogConfig.channelId) return;
+
+            /* ─── Récupérer le salon de log ─── */
+            const channel = guild.channels.cache.get(ticketLogConfig.channelId);
+            if (!channel) {
+                this.logger.warn(`Salon de log tickets introuvable (${ticketLogConfig.channelId}) pour ${guild.id}`);
+                return;
+            }
+
+            /* ─── Correspondance action -> type de log interne ─── */
+            const actionMap = {
+                'ticket_created': 'ticket.create',
+                'ticket_claimed': 'ticket.claim',
+                'ticket_closed':  'ticket.close',
+                'ticket_reopened': 'ticket.reopen',
+            };
+
+            const type = actionMap[action];
+            if (!type) {
+                this.logger.warn(`Action de ticket inconnue : "${action}"`);
+                return;
+            }
+
+            /* ─── Construire et envoyer l'embed ─── */
+            const embed = this._buildEmbed(type, data, ticketLogConfig);
+            await channel.send({ embeds: [embed] });
+
+            this.logger.debug(`Log ticket envoyé : [${action}] sur le serveur ${guild.id}`);
+        } catch (error) {
+            this.logger.error(`Erreur lors du log ticket [${action}] pour ${guild.id} :`, error.message);
+        }
     }
 }
 

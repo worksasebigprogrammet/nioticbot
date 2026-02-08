@@ -102,6 +102,9 @@ module.exports = {
                 caseId: null
             });
 
+            // Journaliser dans les logs admin
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'PURGE', null, { reason: `${deleted.size} message(s) supprimé(s) dans #${channel.name}`, channel: channel.name });
+
             // Construire le message de réponse avec les détails
             let responseText = `**${deleted.size}** message(s) supprimé(s) avec succès.`;
             if (targetUser) {

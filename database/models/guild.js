@@ -100,19 +100,19 @@ const guildSchema = new Schema({
   /* ─── Modules activés / désactivés ─── */
   modules: {
     moderation:    { type: Boolean, default: true },
-    logs:          { type: Boolean, default: false },
-    antiraid:      { type: Boolean, default: false },
-    automod:       { type: Boolean, default: false },
-    tickets:       { type: Boolean, default: false },
-    levels:        { type: Boolean, default: false },
-    economy:       { type: Boolean, default: false },
-    music:         { type: Boolean, default: false },
-    voiceTracking: { type: Boolean, default: false },
-    giveaways:     { type: Boolean, default: false },
-    autoroles:     { type: Boolean, default: false },
-    suggestions:   { type: Boolean, default: false },
-    stats:         { type: Boolean, default: false },
-    backup:        { type: Boolean, default: false }
+    logs:          { type: Boolean, default: true },
+    antiraid:      { type: Boolean, default: true },
+    automod:       { type: Boolean, default: true },
+    tickets:       { type: Boolean, default: true },
+    levels:        { type: Boolean, default: true },
+    economy:       { type: Boolean, default: true },
+    music:         { type: Boolean, default: true },
+    voiceTracking: { type: Boolean, default: true },
+    giveaways:     { type: Boolean, default: true },
+    autoroles:     { type: Boolean, default: true },
+    suggestions:   { type: Boolean, default: true },
+    stats:         { type: Boolean, default: true },
+    backup:        { type: Boolean, default: true }
   },
 
   /* ─── Permissions du bot sur ce serveur ─── */

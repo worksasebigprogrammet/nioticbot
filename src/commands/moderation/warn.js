@@ -125,6 +125,9 @@ module.exports = {
                 caseId: caseId
             });
 
+            // Journaliser dans les logs admin
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'WARN', targetUser, { reason, caseId, warningCount });
+
             // Répondre avec un embed de succès incluant le nombre d'avertissements
             return interaction.reply({
                 embeds: [successEmbed(

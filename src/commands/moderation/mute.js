@@ -140,6 +140,9 @@ module.exports = {
                 duration: durationStr
             });
 
+            // Journaliser dans les logs admin
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'MUTE', targetUser, { reason, duration: durationStr, caseId });
+
             // Répondre avec un embed de succès
             return interaction.reply({
                 embeds: [successEmbed(

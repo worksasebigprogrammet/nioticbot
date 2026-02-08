@@ -8,6 +8,7 @@ const LevelSystem = require('../systems/levels');
 const EconomySystem = require('../systems/economy');
 const VoiceTrackingSystem = require('../systems/voiceTracking');
 const BackupSystem = require('../systems/backup');
+const AdminLogsSystem = require('../systems/adminLogs');
 
 module.exports = {
     name: 'ready',
@@ -44,6 +45,9 @@ module.exports = {
 
             client.systems.backup = new BackupSystem(client);
             Logger.info('Système de Backup initialisé');
+
+            client.systems.adminLogs = new AdminLogsSystem(client);
+            Logger.info('Système de Logs Admin initialisé');
         } catch (error) {
             Logger.error('Erreur lors de l\'initialisation des systèmes:', error);
         }

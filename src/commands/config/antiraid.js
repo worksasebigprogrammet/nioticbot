@@ -1,5 +1,5 @@
-// Commande de gestion de l'anti-raid - Active, désactive et configure le système de protection anti-raid
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+// Commande de gestion de l'anti-raid - Panneau interactif complet avec boutons
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { successEmbed, errorEmbed, createEmbed, warningEmbed } = require('../../utils/embed');
 const Guild = require('../../../database/models/guild');
 const Logger = require('../../utils/logger');
@@ -8,58 +8,36 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('antiraid')
         .setDescription('Gérer le système anti-raid')
-        /* ─── Sous-commande : activer l'anti-raid manuellement ─── */
         .addSubcommand(sub =>
-            sub
-                .setName('on')
-                .setDescription('Activer le mode anti-raid manuellement')
-        )
-        /* ─── Sous-commande : désactiver l'anti-raid ─── */
+            sub.setName('on')
+                .setDescription('Activer le mode anti-raid manuellement'))
         .addSubcommand(sub =>
-            sub
-                .setName('off')
-                .setDescription('Désactiver le mode anti-raid')
-        )
-        /* ─── Sous-commande : configurer les paramètres de l'anti-raid ─── */
+            sub.setName('off')
+                .setDescription('Désactiver le mode anti-raid'))
         .addSubcommand(sub =>
-            sub
-                .setName('config')
-                .setDescription('Configurer les paramètres de l\'anti-raid')
+            sub.setName('config')
+                .setDescription('Panneau de configuration interactive anti-raid')
                 .addIntegerOption(option =>
-                    option
-                        .setName('join_threshold')
+                    option.setName('join_threshold')
                         .setDescription('Nombre d\'arrivées pour déclencher l\'alerte')
-                        .setMinValue(3)
-                        .setMaxValue(50)
-                        .setRequired(false)
-                )
+                        .setMinValue(3).setMaxValue(50).setRequired(false))
                 .addIntegerOption(option =>
-                    option
-                        .setName('time_window')
-                        .setDescription('Fenêtre de temps en secondes pour compter les arrivées')
-                        .setMinValue(5)
-                        .setMaxValue(120)
-                        .setRequired(false)
-                )
+                    option.setName('time_window')
+                        .setDescription('Fenêtre de temps en secondes')
+                        .setMinValue(5).setMaxValue(120).setRequired(false))
                 .addStringOption(option =>
-                    option
-                        .setName('action')
-                        .setDescription('Action à effectuer lors d\'un raid détecté')
+                    option.setName('action')
+                        .setDescription('Action lors d\'un raid détecté')
                         .setRequired(false)
                         .addChoices(
                             { name: '🔒 Vérification uniquement', value: 'verification' },
                             { name: '👢 Expulser les comptes récents', value: 'kick_new' },
                             { name: '🔨 Bannir automatiquement', value: 'auto_ban' },
                             { name: '🔐 Verrouiller le serveur', value: 'lockdown' }
-                        )
-                )
-        )
-        /* ─── Sous-commande : afficher le statut actuel de l'anti-raid ─── */
+                        )))
         .addSubcommand(sub =>
-            sub
-                .setName('status')
-                .setDescription('Voir le statut actuel du système anti-raid')
-        )
+            sub.setName('status')
+                .setDescription('Voir le statut actuel du système anti-raid'))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     module: 'antiraid',
@@ -69,7 +47,6 @@ module.exports = {
         const { guild, client } = interaction;
         const subcommand = interaction.options.getSubcommand();
 
-        // Récupérer la configuration actuelle du serveur
         let guildSettings = await Guild.findOne({ guildId: guild.id });
         if (!guildSettings) {
             guildSettings = await Guild.create({ guildId: guild.id });
@@ -81,86 +58,54 @@ module.exports = {
             case 'off':
                 return await handleOff(interaction, guildSettings, client);
             case 'config':
-                return await handleConfig(interaction, guildSettings);
+                return await handleConfig(interaction, guildSettings, client);
             case 'status':
                 return await handleStatus(interaction, guildSettings, client);
-            default:
-                return interaction.reply({
-                    embeds: [errorEmbed('Sous-commande inconnue.')],
-                    ephemeral: true
-                });
         }
     }
 };
 
-/**
- * Active manuellement le mode anti-raid sur le serveur.
- * Interagit avec le système anti-raid du client pour déclencher le mode défensif.
- *
- * @param {import('discord.js').ChatInputCommandInteraction} interaction
- * @param {object} guildSettings - Configuration du serveur
- * @param {import('discord.js').Client} client - Instance du client Discord
- */
+/* ─── Activer le mode anti-raid ─── */
 async function handleOn(interaction, guildSettings, client) {
     try {
-        // Activer le module anti-raid dans la base de données
         await Guild.findOneAndUpdate(
             { guildId: interaction.guild.id },
-            {
-                $set: {
-                    'modules.antiraid': true,
-                    'antiraid.enabled': true
-                }
-            },
+            { $set: { 'modules.antiraid': true, 'antiraid.enabled': true } },
             { upsert: true }
         );
 
-        // Notifier le système anti-raid si disponible
         if (client.systems?.antiraid) {
             await client.systems.antiraid.activate(interaction.guild.id);
         }
 
-        Logger.info(`Anti-raid activé manuellement sur ${interaction.guild.name} par ${interaction.user.tag}`);
+        Logger.info(`Anti-raid activé sur ${interaction.guild.name} par ${interaction.user.tag}`);
 
         return interaction.reply({
             embeds: [warningEmbed(
                 `Le mode **anti-raid** a été **activé** manuellement.\n\n` +
-                `🛡️ Les protections suivantes sont maintenant actives :\n` +
-                `> • Surveillance renforcée des arrivées\n` +
-                `> • Détection des actions suspectes\n` +
-                `> • Notifications automatiques aux administrateurs\n\n` +
-                `Utilisez \`/antiraid off\` pour désactiver le mode anti-raid.`,
+                `🛡️ Protections actives :\n` +
+                `> Surveillance renforcée des arrivées\n` +
+                `> Détection des actions suspectes\n` +
+                `> Notifications aux administrateurs\n\n` +
+                `Utilisez \`/antiraid off\` pour désactiver.`,
                 '🛡️ Anti-Raid Activé'
-            )],
-            ephemeral: false
+            )]
         });
-
     } catch (error) {
-        Logger.error(`Erreur lors de l'activation de l'anti-raid : ${error.message}`);
-        return interaction.reply({
-            embeds: [errorEmbed(`Une erreur est survenue lors de l'activation de l'anti-raid : ${error.message}`)],
-            ephemeral: true
-        });
+        Logger.error(`Erreur activation anti-raid : ${error.message}`);
+        return interaction.reply({ embeds: [errorEmbed(`Erreur : ${error.message}`)], ephemeral: true });
     }
 }
 
-/**
- * Désactive le mode anti-raid sur le serveur.
- *
- * @param {import('discord.js').ChatInputCommandInteraction} interaction
- * @param {object} guildSettings - Configuration du serveur
- * @param {import('discord.js').Client} client - Instance du client Discord
- */
+/* ─── Désactiver le mode anti-raid ─── */
 async function handleOff(interaction, guildSettings, client) {
     try {
-        // Désactiver l'anti-raid dans la base de données
         await Guild.findOneAndUpdate(
             { guildId: interaction.guild.id },
             { $set: { 'antiraid.enabled': false } },
             { upsert: true }
         );
 
-        // Notifier le système anti-raid si disponible
         if (client.systems?.antiraid) {
             await client.systems.antiraid.deactivate(interaction.guild.id);
         }
@@ -170,75 +115,433 @@ async function handleOff(interaction, guildSettings, client) {
         return interaction.reply({
             embeds: [successEmbed(
                 `Le mode **anti-raid** a été **désactivé**.\n\n` +
-                `Les protections automatiques ne sont plus actives. ` +
-                `Le système peut toujours se réactiver automatiquement en cas de raid détecté ` +
-                `si le module anti-raid reste activé.`
-            )],
-            ephemeral: false
+                `Le système peut toujours se réactiver automatiquement en cas de raid détecté.`
+            )]
         });
-
     } catch (error) {
-        Logger.error(`Erreur lors de la désactivation de l'anti-raid : ${error.message}`);
-        return interaction.reply({
-            embeds: [errorEmbed(`Une erreur est survenue lors de la désactivation : ${error.message}`)],
-            ephemeral: true
-        });
+        Logger.error(`Erreur désactivation anti-raid : ${error.message}`);
+        return interaction.reply({ embeds: [errorEmbed(`Erreur : ${error.message}`)], ephemeral: true });
     }
 }
 
-/**
- * Configure les paramètres du système anti-raid.
- * Permet de modifier le seuil de joins, la fenêtre de temps et les actions.
- *
- * @param {import('discord.js').ChatInputCommandInteraction} interaction
- * @param {object} guildSettings - Configuration du serveur
- */
-async function handleConfig(interaction, guildSettings) {
+/* ─── Configuration interactive avec panneau de boutons ─── */
+async function handleConfig(interaction, guildSettings, client) {
     const joinThreshold = interaction.options.getInteger('join_threshold');
     const timeWindow = interaction.options.getInteger('time_window');
     const action = interaction.options.getString('action');
 
-    // Si aucun paramètre n'est fourni, afficher la configuration actuelle
-    if (!joinThreshold && !timeWindow && !action) {
-        const config = guildSettings.antiraid || {};
-        const actions = config.actions || {};
-
-        const embed = createEmbed({
-            title: '⚙️ Configuration Anti-Raid',
-            description: 'Paramètres actuels du système anti-raid.',
-            color: 'info',
-            fields: [
-                {
-                    name: '📊 Seuils de détection',
-                    value:
-                        `> **Seuil d'arrivées :** \`${config.joinThreshold || 10}\` membres\n` +
-                        `> **Fenêtre de temps :** \`${config.joinTimeWindow || 10}\` secondes\n` +
-                        `> **Seuil actions admin :** \`${config.adminActionThreshold || 5}\``,
-                    inline: false
-                },
-                {
-                    name: '🔧 Actions configurées',
-                    value:
-                        `> Vérification : ${actions.enableVerification !== false ? '✅' : '❌'}\n` +
-                        `> Kick comptes récents : ${actions.kickNewAccounts ? '✅' : '❌'}\n` +
-                        `> Ban automatique : ${actions.autoBan ? '✅' : '❌'}\n` +
-                        `> Verrouillage : ${actions.lockdown ? '✅' : '❌'}\n` +
-                        `> Notification admins : ${actions.notifyAdmins !== false ? '✅' : '❌'}`,
-                    inline: false
-                },
-                {
-                    name: '📅 Âge minimum de compte',
-                    value: `> \`${actions.minAccountAge || 7}\` jours`,
-                    inline: true
-                }
-            ],
-            footer: { text: 'Utilisez /antiraid config [options] pour modifier' }
-        });
-
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+    // Si des paramètres sont fournis, mettre à jour directement
+    if (joinThreshold || timeWindow || action) {
+        return await applyConfigChanges(interaction, joinThreshold, timeWindow, action);
     }
 
-    // Construire l'objet de mise à jour avec les paramètres fournis
+    // Sinon, afficher le panneau interactif complet
+    return await showInteractivePanel(interaction, guildSettings);
+}
+
+/* ─── Panneau interactif principal ─── */
+async function showInteractivePanel(interaction, guildSettings) {
+    const config = guildSettings.antiraid || {};
+    const actions = config.actions || {};
+
+    const embed = new EmbedBuilder()
+        .setColor(config.enabled ? 0xFF0000 : 0x2F3136)
+        .setTitle('🛡️ Configuration Anti-Raid')
+        .setDescription('Configurez tous les paramètres de protection anti-raid via les boutons ci-dessous.')
+        .addFields(
+            {
+                name: '📊 Statut',
+                value: config.enabled ? '✅ Activé' : '❌ Désactivé',
+                inline: true
+            },
+            {
+                name: '👥 Seuil Joins',
+                value: `\`${config.joinThreshold || 10}\` joins en \`${config.joinTimeWindow || 10}\`s`,
+                inline: true
+            },
+            {
+                name: '🔨 Seuil Admin',
+                value: `\`${config.adminActionThreshold || 5}\` actions suspectes`,
+                inline: true
+            },
+            {
+                name: '🚫 Actions lors d\'un raid',
+                value:
+                    `${actions.enableVerification !== false ? '✅' : '❌'} Vérification maximale\n` +
+                    `${actions.kickNewAccounts ? '✅' : '❌'} Kick comptes récents (<\`${actions.minAccountAge || 7}\`j)\n` +
+                    `${actions.autoBan ? '✅' : '❌'} Ban automatique des raiders\n` +
+                    `${actions.lockdown ? '✅' : '❌'} Verrouillage des salons\n` +
+                    `${actions.notifyAdmins !== false ? '✅' : '❌'} Notification admins`,
+                inline: false
+            }
+        )
+        .setFooter({ text: 'Les boutons expirent après 5 minutes' })
+        .setTimestamp();
+
+    // Ligne 1 : Activation / Seuils
+    const row1 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_toggle')
+            .setLabel(config.enabled ? '❌ Désactiver' : '✅ Activer')
+            .setStyle(config.enabled ? ButtonStyle.Danger : ButtonStyle.Success),
+        new ButtonBuilder()
+            .setCustomId('ar_threshold_up')
+            .setLabel('📈 Seuil +5')
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_threshold_down')
+            .setLabel('📉 Seuil -5')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled((config.joinThreshold || 10) <= 5),
+        new ButtonBuilder()
+            .setCustomId('ar_window_up')
+            .setLabel('⏱️ Fenêtre +5s')
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_window_down')
+            .setLabel('⏱️ Fenêtre -5s')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled((config.joinTimeWindow || 10) <= 5)
+    );
+
+    // Ligne 2 : Actions individuelles
+    const row2 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_act_verification')
+            .setLabel('🔒 Vérification')
+            .setStyle(actions.enableVerification !== false ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_kick')
+            .setLabel('👢 Kick récents')
+            .setStyle(actions.kickNewAccounts ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_ban')
+            .setLabel('🔨 Auto-Ban')
+            .setStyle(actions.autoBan ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_lockdown')
+            .setLabel('🔐 Lockdown')
+            .setStyle(actions.lockdown ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_notify')
+            .setLabel('📢 Notifier')
+            .setStyle(actions.notifyAdmins !== false ? ButtonStyle.Success : ButtonStyle.Secondary)
+    );
+
+    // Ligne 3 : Presets rapides
+    const row3 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_preset_low')
+            .setLabel('🟢 Protection Basse')
+            .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+            .setCustomId('ar_preset_medium')
+            .setLabel('🟡 Protection Moyenne')
+            .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+            .setCustomId('ar_preset_high')
+            .setLabel('🔴 Protection Maximale')
+            .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+            .setCustomId('ar_refresh')
+            .setLabel('🔄 Actualiser')
+            .setStyle(ButtonStyle.Secondary)
+    );
+
+    // Répondre ou mettre à jour selon le type d'interaction
+    const messageOptions = { embeds: [embed], components: [row1, row2, row3], ephemeral: true };
+
+    let reply;
+    if (interaction.replied || interaction.deferred) {
+        reply = await interaction.editReply(messageOptions);
+    } else if (interaction.isButton()) {
+        await interaction.update(messageOptions);
+        reply = await interaction.message;
+    } else {
+        reply = await interaction.reply({ ...messageOptions, fetchReply: true });
+    }
+
+    // Collecteur d'interactions pour les boutons
+    const collector = reply.createMessageComponentCollector({
+        filter: i => i.user.id === interaction.user.id,
+        time: 300000 // 5 minutes
+    });
+
+    collector.on('collect', async (i) => {
+        try {
+            // Recharger les settings depuis la BDD
+            let freshSettings = await Guild.findOne({ guildId: interaction.guild.id });
+            if (!freshSettings) freshSettings = await Guild.create({ guildId: interaction.guild.id });
+
+            const cfg = freshSettings.antiraid || {};
+            const acts = cfg.actions || {};
+
+            switch (i.customId) {
+                case 'ar_toggle':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.enabled': !cfg.enabled } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_threshold_up':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.joinThreshold': Math.min((cfg.joinThreshold || 10) + 5, 50) } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_threshold_down':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.joinThreshold': Math.max((cfg.joinThreshold || 10) - 5, 3) } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_window_up':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.joinTimeWindow': Math.min((cfg.joinTimeWindow || 10) + 5, 120) } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_window_down':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.joinTimeWindow': Math.max((cfg.joinTimeWindow || 10) - 5, 5) } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_act_verification':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.actions.enableVerification': acts.enableVerification === false } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_act_kick':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.actions.kickNewAccounts': !acts.kickNewAccounts } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_act_ban':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.actions.autoBan': !acts.autoBan } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_act_lockdown':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.actions.lockdown': !acts.lockdown } },
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_act_notify':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: { 'antiraid.actions.notifyAdmins': acts.notifyAdmins === false ? true : false } },
+                        { upsert: true }
+                    );
+                    break;
+
+                // Presets de protection
+                case 'ar_preset_low':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: {
+                            'antiraid.enabled': true,
+                            'antiraid.joinThreshold': 15,
+                            'antiraid.joinTimeWindow': 10,
+                            'antiraid.actions.enableVerification': true,
+                            'antiraid.actions.kickNewAccounts': false,
+                            'antiraid.actions.autoBan': false,
+                            'antiraid.actions.lockdown': false,
+                            'antiraid.actions.notifyAdmins': true
+                        }},
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_preset_medium':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: {
+                            'antiraid.enabled': true,
+                            'antiraid.joinThreshold': 10,
+                            'antiraid.joinTimeWindow': 10,
+                            'antiraid.actions.enableVerification': true,
+                            'antiraid.actions.kickNewAccounts': true,
+                            'antiraid.actions.autoBan': false,
+                            'antiraid.actions.lockdown': false,
+                            'antiraid.actions.notifyAdmins': true
+                        }},
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_preset_high':
+                    await Guild.findOneAndUpdate(
+                        { guildId: interaction.guild.id },
+                        { $set: {
+                            'antiraid.enabled': true,
+                            'antiraid.joinThreshold': 5,
+                            'antiraid.joinTimeWindow': 10,
+                            'antiraid.actions.enableVerification': true,
+                            'antiraid.actions.kickNewAccounts': true,
+                            'antiraid.actions.autoBan': true,
+                            'antiraid.actions.lockdown': true,
+                            'antiraid.actions.notifyAdmins': true
+                        }},
+                        { upsert: true }
+                    );
+                    break;
+
+                case 'ar_refresh':
+                    break; // Simple rechargement
+            }
+
+            // Recharger et réafficher le panneau
+            const updatedSettings = await Guild.findOne({ guildId: interaction.guild.id });
+            await refreshPanel(i, updatedSettings);
+
+        } catch (error) {
+            Logger.error(`Erreur interaction antiraid: ${error.message}`);
+            await i.reply({ embeds: [errorEmbed(`Erreur : ${error.message}`)], ephemeral: true }).catch(() => {});
+        }
+    });
+
+    // Désactiver les boutons à l'expiration
+    collector.on('end', async () => {
+        try {
+            await reply.edit({ components: [] }).catch(() => {});
+        } catch (e) { /* Message peut avoir été supprimé */ }
+    });
+}
+
+/* ─── Rafraîchir le panneau interactif après une modification ─── */
+async function refreshPanel(interaction, guildSettings) {
+    const config = guildSettings.antiraid || {};
+    const actions = config.actions || {};
+
+    const embed = new EmbedBuilder()
+        .setColor(config.enabled ? 0xFF0000 : 0x2F3136)
+        .setTitle('🛡️ Configuration Anti-Raid')
+        .setDescription('Configurez tous les paramètres de protection anti-raid via les boutons ci-dessous.')
+        .addFields(
+            {
+                name: '📊 Statut',
+                value: config.enabled ? '✅ Activé' : '❌ Désactivé',
+                inline: true
+            },
+            {
+                name: '👥 Seuil Joins',
+                value: `\`${config.joinThreshold || 10}\` joins en \`${config.joinTimeWindow || 10}\`s`,
+                inline: true
+            },
+            {
+                name: '🔨 Seuil Admin',
+                value: `\`${config.adminActionThreshold || 5}\` actions suspectes`,
+                inline: true
+            },
+            {
+                name: '🚫 Actions lors d\'un raid',
+                value:
+                    `${actions.enableVerification !== false ? '✅' : '❌'} Vérification maximale\n` +
+                    `${actions.kickNewAccounts ? '✅' : '❌'} Kick comptes récents (<\`${actions.minAccountAge || 7}\`j)\n` +
+                    `${actions.autoBan ? '✅' : '❌'} Ban automatique des raiders\n` +
+                    `${actions.lockdown ? '✅' : '❌'} Verrouillage des salons\n` +
+                    `${actions.notifyAdmins !== false ? '✅' : '❌'} Notification admins`,
+                inline: false
+            }
+        )
+        .setFooter({ text: 'Les boutons expirent après 5 minutes' })
+        .setTimestamp();
+
+    const row1 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_toggle')
+            .setLabel(config.enabled ? '❌ Désactiver' : '✅ Activer')
+            .setStyle(config.enabled ? ButtonStyle.Danger : ButtonStyle.Success),
+        new ButtonBuilder()
+            .setCustomId('ar_threshold_up')
+            .setLabel('📈 Seuil +5')
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_threshold_down')
+            .setLabel('📉 Seuil -5')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled((config.joinThreshold || 10) <= 5),
+        new ButtonBuilder()
+            .setCustomId('ar_window_up')
+            .setLabel('⏱️ Fenêtre +5s')
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_window_down')
+            .setLabel('⏱️ Fenêtre -5s')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled((config.joinTimeWindow || 10) <= 5)
+    );
+
+    const row2 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_act_verification')
+            .setLabel('🔒 Vérification')
+            .setStyle(actions.enableVerification !== false ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_kick')
+            .setLabel('👢 Kick récents')
+            .setStyle(actions.kickNewAccounts ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_ban')
+            .setLabel('🔨 Auto-Ban')
+            .setStyle(actions.autoBan ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_lockdown')
+            .setLabel('🔐 Lockdown')
+            .setStyle(actions.lockdown ? ButtonStyle.Success : ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId('ar_act_notify')
+            .setLabel('📢 Notifier')
+            .setStyle(actions.notifyAdmins !== false ? ButtonStyle.Success : ButtonStyle.Secondary)
+    );
+
+    const row3 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('ar_preset_low')
+            .setLabel('🟢 Protection Basse')
+            .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+            .setCustomId('ar_preset_medium')
+            .setLabel('🟡 Protection Moyenne')
+            .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+            .setCustomId('ar_preset_high')
+            .setLabel('🔴 Protection Maximale')
+            .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+            .setCustomId('ar_refresh')
+            .setLabel('🔄 Actualiser')
+            .setStyle(ButtonStyle.Secondary)
+    );
+
+    await interaction.update({ embeds: [embed], components: [row1, row2, row3] });
+}
+
+/* ─── Appliquer des changements directs via options ─── */
+async function applyConfigChanges(interaction, joinThreshold, timeWindow, action) {
     const updateFields = {};
     const changes = [];
 
@@ -252,38 +555,18 @@ async function handleConfig(interaction, guildSettings) {
         changes.push(`**Fenêtre de temps :** \`${timeWindow}s\``);
     }
 
-    // Configurer les actions selon le choix de l'utilisateur
     if (action) {
-        switch (action) {
-            case 'verification':
-                updateFields['antiraid.actions.enableVerification'] = true;
-                updateFields['antiraid.actions.kickNewAccounts'] = false;
-                updateFields['antiraid.actions.autoBan'] = false;
-                updateFields['antiraid.actions.lockdown'] = false;
-                changes.push('**Action :** Vérification uniquement');
-                break;
-            case 'kick_new':
-                updateFields['antiraid.actions.enableVerification'] = true;
-                updateFields['antiraid.actions.kickNewAccounts'] = true;
-                updateFields['antiraid.actions.autoBan'] = false;
-                updateFields['antiraid.actions.lockdown'] = false;
-                changes.push('**Action :** Expulser les comptes récents');
-                break;
-            case 'auto_ban':
-                updateFields['antiraid.actions.enableVerification'] = true;
-                updateFields['antiraid.actions.kickNewAccounts'] = true;
-                updateFields['antiraid.actions.autoBan'] = true;
-                updateFields['antiraid.actions.lockdown'] = false;
-                changes.push('**Action :** Bannir automatiquement');
-                break;
-            case 'lockdown':
-                updateFields['antiraid.actions.enableVerification'] = true;
-                updateFields['antiraid.actions.kickNewAccounts'] = true;
-                updateFields['antiraid.actions.autoBan'] = true;
-                updateFields['antiraid.actions.lockdown'] = true;
-                changes.push('**Action :** Verrouillage du serveur');
-                break;
+        const actionPresets = {
+            verification: { enableVerification: true, kickNewAccounts: false, autoBan: false, lockdown: false },
+            kick_new: { enableVerification: true, kickNewAccounts: true, autoBan: false, lockdown: false },
+            auto_ban: { enableVerification: true, kickNewAccounts: true, autoBan: true, lockdown: false },
+            lockdown: { enableVerification: true, kickNewAccounts: true, autoBan: true, lockdown: true }
+        };
+        const preset = actionPresets[action];
+        for (const [key, value] of Object.entries(preset)) {
+            updateFields[`antiraid.actions.${key}`] = value;
         }
+        changes.push(`**Action :** ${action}`);
     }
 
     try {
@@ -293,45 +576,32 @@ async function handleConfig(interaction, guildSettings) {
             { upsert: true }
         );
 
-        Logger.info(`Configuration anti-raid mise à jour sur ${interaction.guild.name} par ${interaction.user.tag}`);
+        Logger.info(`Config anti-raid mise à jour sur ${interaction.guild.name} par ${interaction.user.tag}`);
 
         return interaction.reply({
             embeds: [successEmbed(
-                `La configuration de l'anti-raid a été mise à jour :\n\n` +
+                `Configuration anti-raid mise à jour :\n\n` +
                 changes.map(c => `> ${c}`).join('\n')
             )],
             ephemeral: true
         });
-
     } catch (error) {
-        Logger.error(`Erreur lors de la configuration de l'anti-raid : ${error.message}`);
-        return interaction.reply({
-            embeds: [errorEmbed(`Une erreur est survenue : ${error.message}`)],
-            ephemeral: true
-        });
+        Logger.error(`Erreur config anti-raid : ${error.message}`);
+        return interaction.reply({ embeds: [errorEmbed(`Erreur : ${error.message}`)], ephemeral: true });
     }
 }
 
-/**
- * Affiche le statut actuel du système anti-raid.
- * Montre si le mode est actif, les statistiques récentes et la configuration.
- *
- * @param {import('discord.js').ChatInputCommandInteraction} interaction
- * @param {object} guildSettings - Configuration du serveur
- * @param {import('discord.js').Client} client - Instance du client Discord
- */
+/* ─── Afficher le statut actuel ─── */
 async function handleStatus(interaction, guildSettings, client) {
     const antiraidConfig = guildSettings.antiraid || {};
     const isModuleEnabled = guildSettings.modules?.antiraid || false;
     const isActive = antiraidConfig.enabled || false;
 
-    // Récupérer les données en temps réel du système anti-raid si disponible
     let realtimeData = null;
     if (client.systems?.antiraid) {
         realtimeData = await client.systems.antiraid.getStatus(interaction.guild.id).catch(() => null);
     }
 
-    // Déterminer le niveau d'alerte actuel
     let alertLevel = '🟢 Normal';
     let alertColor = 'success';
     if (isActive && realtimeData?.raidDetected) {
@@ -342,34 +612,21 @@ async function handleStatus(interaction, guildSettings, client) {
         alertColor = 'warning';
     } else if (!isModuleEnabled) {
         alertLevel = '⚫ Désactivé';
-        alertColor = 'log';
+        alertColor = 0x2F3136;
     }
 
     const embed = createEmbed({
         title: '🛡️ Statut Anti-Raid',
-        description: `État actuel du système de protection anti-raid.`,
+        description: 'État actuel du système de protection anti-raid.',
         color: alertColor,
         fields: [
-            {
-                name: '📌 État du module',
-                value: isModuleEnabled ? '✅ Module activé' : '❌ Module désactivé',
-                inline: true
-            },
-            {
-                name: '🔰 Mode anti-raid',
-                value: isActive ? '✅ Actif' : '❌ Inactif',
-                inline: true
-            },
-            {
-                name: '🚨 Niveau d\'alerte',
-                value: alertLevel,
-                inline: true
-            },
+            { name: '📌 Module', value: isModuleEnabled ? '✅ Activé' : '❌ Désactivé', inline: true },
+            { name: '🔰 Mode', value: isActive ? '✅ Actif' : '❌ Inactif', inline: true },
+            { name: '🚨 Alerte', value: alertLevel, inline: true },
             {
                 name: '📊 Configuration',
-                value:
-                    `> Seuil : \`${antiraidConfig.joinThreshold || 10}\` joins / \`${antiraidConfig.joinTimeWindow || 10}\`s\n` +
-                    `> Seuil admin : \`${antiraidConfig.adminActionThreshold || 5}\` actions`,
+                value: `> Seuil : \`${antiraidConfig.joinThreshold || 10}\` joins / \`${antiraidConfig.joinTimeWindow || 10}\`s\n` +
+                       `> Seuil admin : \`${antiraidConfig.adminActionThreshold || 5}\` actions`,
                 inline: false
             },
             {
@@ -378,7 +635,7 @@ async function handleStatus(interaction, guildSettings, client) {
                     ? `> Arrivées récentes : \`${realtimeData.recentJoins || 0}\`\n` +
                       `> Actions suspectes : \`${realtimeData.suspiciousActions || 0}\`\n` +
                       `> Raids détectés : \`${realtimeData.totalRaids || 0}\``
-                    : '> *Données non disponibles (système non initialisé)*',
+                    : '> *Système non initialisé*',
                 inline: false
             }
         ],

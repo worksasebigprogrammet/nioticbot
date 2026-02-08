@@ -156,6 +156,9 @@ module.exports = {
                 duration: durationStr || null
             });
 
+            // Journaliser dans les logs admin
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, durationStr ? 'BAN' : 'BAN', targetUser, { reason, duration: durationStr || 'Permanent', caseId });
+
             // Répondre avec un embed de succès
             return interaction.reply({
                 embeds: [successEmbed(

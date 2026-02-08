@@ -297,6 +297,14 @@ module.exports = {
             // Journaliser la création du ticket
             Logger.info(`Ticket #${ticketNumber} créé par ${interaction.user.tag} sur ${interaction.guild.name}`);
 
+            // Journaliser via le système de logs (logs.tickets)
+            client.systems?.logs?.logTicket(interaction.guild, 'ticket_created', {
+                user: interaction.user,
+                channel: ticketChannel,
+                category: categoryLabel,
+                ticketId: ticketNumber
+            });
+
             // Envoyer un log dans le salon de logs des tickets si configuré
             if (guildSettings?.tickets?.logChannelId) {
                 const logChannel = interaction.guild.channels.cache.get(guildSettings.tickets.logChannelId);
@@ -696,6 +704,15 @@ module.exports = {
 
             Logger.info(`Ticket #${ticket.ticketId} fermé par ${interaction.user.tag} sur ${interaction.guild.name}`);
 
+            // Journaliser via le système de logs (logs.tickets)
+            client.systems?.logs?.logTicket(interaction.guild, 'ticket_closed', {
+                user: { tag: ticket.userTag, id: ticket.userId },
+                closedBy: interaction.user,
+                channel: interaction.channel,
+                reason: reason,
+                ticketId: ticket.ticketId
+            });
+
             // Supprimer le salon après 10 secondes
             setTimeout(async () => {
                 try {
@@ -790,6 +807,14 @@ module.exports = {
         });
 
         Logger.info(`Ticket #${ticket.ticketId} pris en charge par ${interaction.user.tag}`);
+
+        // Journaliser via le système de logs (logs.tickets)
+        client.systems?.logs?.logTicket(interaction.guild, 'ticket_claimed', {
+            user: { tag: ticket.userTag, id: ticket.userId },
+            staff: interaction.user,
+            channel: interaction.channel,
+            ticketId: ticket.ticketId
+        });
 
         // Envoyer un log si configuré
         const guildSettings = await Guild.findOne({ guildId: interaction.guild.id });
