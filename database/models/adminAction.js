@@ -8,7 +8,7 @@ const adminActionSchema = new Schema({
     action: {
         type: String,
         required: true,
-        enum: ['BAN', 'KICK', 'MUTE', 'WARN', 'UNBAN', 'UNMUTE', 'CONFIG_CHANGE', 'ROLE_CHANGE', 'CHANNEL_EDIT', 'ANTIRAID_TRIGGER', 'SETUP_RUN', 'MODULE_TOGGLE', 'LOG_CONFIG', 'PURGE', 'SOFTBAN']
+        enum: ['BAN', 'KICK', 'MUTE', 'WARN', 'UNBAN', 'UNMUTE', 'CLEARWARNS', 'CONFIG_CHANGE', 'ROLE_CHANGE', 'CHANNEL_EDIT', 'ANTIRAID_TRIGGER', 'SETUP_RUN', 'MODULE_TOGGLE', 'LOG_CONFIG', 'PURGE', 'SOFTBAN']
     },
     targetId: { type: String, default: null },
     targetTag: { type: String, default: null },

@@ -48,7 +48,12 @@ const data = new SlashCommandBuilder()
                         { name: 'Ban', value: 'BAN' },
                         { name: 'Kick', value: 'KICK' },
                         { name: 'Mute', value: 'MUTE' },
+                        { name: 'Unmute', value: 'UNMUTE' },
                         { name: 'Warn', value: 'WARN' },
+                        { name: 'Clear warns', value: 'CLEARWARNS' },
+                        { name: 'Softban', value: 'SOFTBAN' },
+                        { name: 'Purge', value: 'PURGE' },
+                        { name: 'Unban', value: 'UNBAN' },
                         { name: 'Changement de config', value: 'CONFIG_CHANGE' },
                         { name: 'Déclenchement antiraid', value: 'ANTIRAID_TRIGGER' }
                     )

@@ -54,7 +54,7 @@ module.exports = {
             });
 
             // Journaliser dans les logs admin
-            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'WARN', targetUser, { reason: `${warningCount} avertissement(s) effacé(s)` });
+            await client.systems?.adminLogs?.logAdminAction(guild, member.user, 'CLEARWARNS', targetUser, { reason: `${warningCount} avertissement(s) effacé(s)` });
 
             // Répondre avec un embed de succès
             return interaction.reply({
